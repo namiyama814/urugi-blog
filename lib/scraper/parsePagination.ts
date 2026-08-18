@@ -1,4 +1,5 @@
-import * as cheerio from "cheerio";
+import { parse } from "node-html-parser";
+import { closeUnclosedListTag } from "./htmlQuirks";
 
 export interface SourcePagination {
   currentPage: number;
@@ -7,22 +8,22 @@ export interface SourcePagination {
 
 /** Reads the source site's `<nav class="navigation pagination">`, if present. */
 export function parsePaginationHtml(html: string): SourcePagination {
-  const $ = cheerio.load(html);
-  const nav = $("nav.navigation.pagination");
-  if (nav.length === 0) {
+  const root = parse(closeUnclosedListTag(html));
+  const nav = root.querySelector("nav.navigation.pagination");
+  if (!nav) {
     return { currentPage: 1, lastPage: 1 };
   }
 
   let lastPage = 1;
   let currentPage = 1;
 
-  nav.find(".page-numbers").each((_, el) => {
-    const $el = $(el);
-    const num = Number($el.text().trim());
-    if (Number.isNaN(num)) return;
+  for (const el of nav.querySelectorAll(".page-numbers")) {
+    const num = Number(el.text.trim());
+    if (Number.isNaN(num)) continue;
     lastPage = Math.max(lastPage, num);
-    if ($el.hasClass("current")) currentPage = num;
-  });
+    const classes = el.getAttribute("class")?.split(/\s+/) ?? [];
+    if (classes.includes("current")) currentPage = num;
+  }
 
   return { currentPage, lastPage };
 }

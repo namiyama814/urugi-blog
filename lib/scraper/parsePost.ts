@@ -1,4 +1,4 @@
-import * as cheerio from "cheerio";
+import { parse } from "node-html-parser";
 
 export interface ParsedPost {
   title: string;
@@ -12,17 +12,18 @@ export interface ParsedPost {
  * the unrelated "戻る" link that follows the article in the DOM.
  */
 export function parsePostHtml(html: string): ParsedPost {
-  const $ = cheerio.load(html);
-  const entryBox = $("article > div.entry-box").first();
+  const root = parse(html);
+  const entryBox = root.querySelector("article > div.entry-box");
 
-  const title = entryBox.find("h2").first().text().trim();
-  entryBox.find("h2").first().remove();
+  const h2 = entryBox?.querySelector("h2");
+  const title = h2?.text.trim() ?? "";
+  h2?.remove();
 
-  const date = $("article > p.date").first().text().trim();
+  const date = root.querySelector("article > p.date")?.text.trim() ?? "";
 
   return {
     title,
-    rawContentHtml: entryBox.html() ?? "",
+    rawContentHtml: entryBox?.innerHTML ?? "",
     date,
   };
 }

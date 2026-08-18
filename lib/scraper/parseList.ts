@@ -1,4 +1,5 @@
-import * as cheerio from "cheerio";
+import { parse } from "node-html-parser";
+import { closeUnclosedListTag } from "./htmlQuirks";
 import { slugFromUrl } from "./slug";
 import type { PostSummary } from "./types";
 
@@ -8,18 +9,17 @@ import type { PostSummary } from "./types";
  * An empty search result renders `<li>ブログ記事はまだありません</li>` with no `<a>` — skip those.
  */
 export function parseListHtml(html: string): PostSummary[] {
-  const $ = cheerio.load(html);
+  const root = parse(closeUnclosedListTag(html));
   const posts: PostSummary[] = [];
 
-  $("ul.list > li").each((_, li) => {
-    const $li = $(li);
-    const $a = $li.find("a").first();
-    const href = $a.attr("href");
-    if (!href) return;
+  for (const li of root.querySelectorAll("ul.list > li")) {
+    const a = li.querySelector("a");
+    if (!a) continue;
+    const href = a.getAttribute("href");
+    if (!href) continue;
 
-    const title = $a.text().trim();
-    const dateText = $li.clone().children("a").remove().end().text();
-    const dateMatch = dateText.match(/\((\d{2}\/\d{2}\/\d{2})\)/);
+    const title = a.text.trim();
+    const dateMatch = li.text.match(/\((\d{2}\/\d{2}\/\d{2})\)/);
 
     posts.push({
       slug: slugFromUrl(href),
@@ -27,7 +27,7 @@ export function parseListHtml(html: string): PostSummary[] {
       title,
       date: dateMatch?.[1] ?? "",
     });
-  });
+  }
 
   return posts;
 }
