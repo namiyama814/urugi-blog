@@ -11,20 +11,21 @@ export default function BookmarksPage() {
     <div className="mx-auto w-full max-w-2xl px-4 py-8">
       <h1 className="mb-6 text-2xl font-bold">ブックマーク</h1>
       {bookmarks.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">
-          ブックマークした記事はありません。
-        </p>
+        <p className="text-foreground/60">ブックマークした記事はありません。</p>
       ) : (
-        <ul className="divide-y divide-gray-200 dark:divide-gray-800">
+        <ul className="divide-y divide-foreground/10 overflow-hidden rounded-2xl border border-foreground/10">
           {bookmarks.map((bookmark) => (
-            <li key={bookmark.slug} className="py-4">
+            <li
+              key={bookmark.slug}
+              className="px-4 py-4 transition-colors hover:bg-foreground/5"
+            >
               <Link
                 href={`/post/${bookmark.slug}`}
-                className="text-lg font-medium text-gray-900 hover:underline dark:text-gray-100"
+                className="font-medium hover:underline"
               >
                 {bookmark.title}
               </Link>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-foreground/60">
                 {formatSourceDate(bookmark.date)}
               </p>
             </li>

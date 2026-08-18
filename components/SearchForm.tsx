@@ -6,11 +6,11 @@ export function SearchForm({ initialQuery }: { initialQuery: string }) {
         name="q"
         defaultValue={initialQuery}
         placeholder="キーワードを入力"
-        className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900"
+        className="flex-1 rounded-full border border-foreground/15 bg-background px-4 py-2 text-sm"
       />
       <button
         type="submit"
-        className="rounded bg-gray-900 px-4 py-2 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
+        className="rounded-full bg-foreground px-5 py-2 text-sm text-background"
       >
         検索
       </button>

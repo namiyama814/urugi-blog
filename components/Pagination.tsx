@@ -31,7 +31,7 @@ export function Pagination({
 
   return (
     <nav
-      className="flex items-center justify-between border-t border-gray-200 py-4 dark:border-gray-800"
+      className="flex items-center justify-between py-6"
       aria-label="ページネーション"
     >
       {prevPage ? (
@@ -41,7 +41,7 @@ export function Pagination({
       ) : (
         <span />
       )}
-      <span className="text-sm text-gray-500 dark:text-gray-400">
+      <span className="text-sm text-foreground/60">
         {currentPage} / {lastPage}
       </span>
       {nextPage ? (

@@ -29,7 +29,7 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="mb-2 text-2xl font-bold">{post.title}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-foreground/60">
             {formatSourceDate(post.date)}
           </p>
         </div>
