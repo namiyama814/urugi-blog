@@ -7,9 +7,12 @@ export function PostListItem({ post }: { post: PostSummary }) {
   const slug = post.slug.join("/");
 
   return (
-    <li className="flex items-start justify-between gap-4 px-4 py-4 transition-colors hover:bg-foreground/5">
+    <li className="relative flex items-start justify-between gap-4 px-4 py-4 transition-colors hover:bg-foreground/5">
       <div>
-        <Link href={`/post/${slug}`} className="font-medium hover:underline">
+        <Link
+          href={`/post/${slug}`}
+          className="font-medium after:absolute after:inset-0 hover:underline"
+        >
           {post.title}
         </Link>
         <p className="mt-1 text-sm text-foreground/60">

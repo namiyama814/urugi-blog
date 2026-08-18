@@ -19,7 +19,7 @@ export function BookmarkButton({ slug, title, date }: BookmarkButtonProps) {
       aria-pressed={bookmarked}
       aria-label={bookmarked ? "ブックマークを解除" : "ブックマークに追加"}
       title={bookmarked ? "ブックマークを解除" : "ブックマークに追加"}
-      className="shrink-0 rounded-full p-2 text-foreground hover:bg-foreground/10"
+      className="relative z-10 shrink-0 rounded-full p-2 text-foreground hover:bg-foreground/10"
     >
       <svg
         viewBox="0 0 24 24"

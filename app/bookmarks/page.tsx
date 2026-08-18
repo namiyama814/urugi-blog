@@ -17,11 +17,11 @@ export default function BookmarksPage() {
           {bookmarks.map((bookmark) => (
             <li
               key={bookmark.slug}
-              className="px-4 py-4 transition-colors hover:bg-foreground/5"
+              className="relative px-4 py-4 transition-colors hover:bg-foreground/5"
             >
               <Link
                 href={`/post/${bookmark.slug}`}
-                className="font-medium hover:underline"
+                className="font-medium after:absolute after:inset-0 hover:underline"
               >
                 {bookmark.title}
               </Link>
