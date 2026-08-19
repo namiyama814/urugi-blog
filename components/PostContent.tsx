@@ -24,11 +24,17 @@ export function PostContent({ html, postSlug, postTitle }: PostContentProps) {
       (img, index) => {
         img.dataset.reelIndex = String(index);
         const caption = img.closest("figure")?.querySelector("figcaption")?.textContent?.trim();
-        return { src: img.currentSrc || img.src, alt: img.alt, caption: caption || undefined };
+        return {
+          src: img.currentSrc || img.src,
+          alt: img.alt,
+          caption: caption || undefined,
+          postSlug,
+          postTitle,
+        };
       },
     );
     setImages(list);
-  }, [html]);
+  }, [html, postSlug, postTitle]);
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
@@ -47,13 +53,7 @@ export function PostContent({ html, postSlug, postTitle }: PostContentProps) {
         dangerouslySetInnerHTML={{ __html: html }}
       />
       {openIndex !== null && (
-        <ImageReel
-          images={images}
-          initialIndex={openIndex}
-          onClose={() => setOpenIndex(null)}
-          postSlug={postSlug}
-          postTitle={postTitle}
-        />
+        <ImageReel images={images} initialIndex={openIndex} onClose={() => setOpenIndex(null)} />
       )}
     </>
   );

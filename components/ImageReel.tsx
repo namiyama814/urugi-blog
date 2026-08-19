@@ -7,15 +7,17 @@ export interface ReelImage {
   src: string;
   alt: string;
   caption?: string;
+  /** Post this image belongs to, so it can be bookmarked individually — set
+   * per image (not once for the whole reel) since a bookmarks-tab reel can
+   * mix photos from different posts. */
+  postSlug: string;
+  postTitle: string;
 }
 
 interface ImageReelProps {
   images: ReelImage[];
   initialIndex: number;
   onClose: () => void;
-  /** Post these images belong to, so each one can be bookmarked individually. */
-  postSlug: string;
-  postTitle: string;
 }
 
 const SWIPE_THRESHOLD_PX = 50;
@@ -38,7 +40,7 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-export function ImageReel({ images, initialIndex, onClose, postSlug, postTitle }: ImageReelProps) {
+export function ImageReel({ images, initialIndex, onClose }: ImageReelProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isOpen, setIsOpen] = useState(false);
   const touchStartX = useRef<number | null>(null);
@@ -151,33 +153,34 @@ export function ImageReel({ images, initialIndex, onClose, postSlug, postTitle }
         {images.map((image, i) => (
           <div
             key={i}
-            className="relative flex w-full shrink-0 flex-col items-center justify-center gap-3 p-4"
+            className="flex w-full shrink-0 flex-col items-center justify-center gap-3 p-4"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={image.src}
-              alt={image.alt}
-              loading="lazy"
-              decoding="async"
-              referrerPolicy="no-referrer"
-              className="max-h-[80vh] max-w-full rounded-lg object-contain"
-              onClick={(event) => event.stopPropagation()}
-            />
+            {/* Bookmark button anchors to the image's own corner (not the slide's),
+                so it stays clear on desktop where the image is much smaller than
+                the viewport instead of stranding the button in a far corner. */}
+            <div className="relative" onClick={(event) => event.stopPropagation()}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={image.src}
+                alt={image.alt}
+                loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
+                className="max-h-[80vh] max-w-full rounded-lg object-contain"
+              />
+              <div className="absolute bottom-2 right-2 z-10">
+                <ImageBookmarkButton
+                  src={image.src}
+                  alt={image.alt}
+                  caption={image.caption}
+                  postSlug={image.postSlug}
+                  postTitle={image.postTitle}
+                />
+              </div>
+            </div>
             {image.caption && (
               <p className="max-w-full text-center text-sm text-white/70">{image.caption}</p>
             )}
-            <div
-              className="absolute bottom-4 right-4 z-10"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <ImageBookmarkButton
-                src={image.src}
-                alt={image.alt}
-                caption={image.caption}
-                postSlug={postSlug}
-                postTitle={postTitle}
-              />
-            </div>
           </div>
         ))}
       </div>

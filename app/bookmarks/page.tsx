@@ -3,17 +3,42 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FeedScroller } from "@/components/FeedScroller";
+import { ImageReel } from "@/components/ImageReel";
 import { useBookmarks } from "@/contexts/BookmarksContext";
 import { useImageBookmarks } from "@/contexts/ImageBookmarksContext";
 import { formatSourceDate } from "@/lib/formatDate";
 
 type Tab = "posts" | "images";
 
+function FeedIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="16"
+      height="16"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="3" width="13" height="13" rx="2" />
+      <path d="M7 21h11a2 2 0 0 0 2-2V8" />
+    </svg>
+  );
+}
+
 export default function BookmarksPage() {
   const { bookmarks } = useBookmarks();
   const { imageBookmarks } = useImageBookmarks();
   const [tab, setTab] = useState<Tab>("posts");
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  // Tapping a thumbnail opens the single-image reel (swipe browsing); the small
+  // feed-icon overlay opens the short-video-style feed instead — two distinct
+  // entry points so someone who just wants to see one photo isn't forced into
+  // the feed's snap-scroll flow.
+  const [reelIndex, setReelIndex] = useState<number | null>(null);
+  const [feedIndex, setFeedIndex] = useState<number | null>(null);
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8">
@@ -76,32 +101,53 @@ export default function BookmarksPage() {
         ) : (
           <div className="grid grid-cols-3 gap-1">
             {imageBookmarks.map((image, index) => (
-              <button
+              <div
                 key={image.src}
-                type="button"
-                onClick={() => setOpenIndex(index)}
-                title={image.postTitle}
-                className="aspect-square overflow-hidden rounded-md bg-foreground/5"
+                className="relative aspect-square overflow-hidden rounded-md bg-foreground/5"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  loading="lazy"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  className="h-full w-full object-cover"
-                />
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setReelIndex(index)}
+                  title={image.postTitle}
+                  className="block h-full w-full"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    loading="lazy"
+                    decoding="async"
+                    referrerPolicy="no-referrer"
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFeedIndex(index)}
+                  aria-label="ショートフィードで見る"
+                  title="ショートフィードで見る"
+                  className="absolute bottom-1 right-1 z-10 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
+                >
+                  <FeedIcon />
+                </button>
+              </div>
             ))}
           </div>
         ))}
 
-      {openIndex !== null && (
+      {reelIndex !== null && (
+        <ImageReel
+          images={imageBookmarks}
+          initialIndex={reelIndex}
+          onClose={() => setReelIndex(null)}
+        />
+      )}
+
+      {feedIndex !== null && (
         <div className="feed-backdrop fixed inset-0 z-50">
           <button
             type="button"
-            onClick={() => setOpenIndex(null)}
+            onClick={() => setFeedIndex(null)}
             aria-label="閉じる"
             className="absolute left-3 top-10 z-30 rounded-full p-2 text-white hover:bg-white/10"
           >
@@ -120,9 +166,9 @@ export default function BookmarksPage() {
           </button>
           <FeedScroller
             images={imageBookmarks}
-            initialIndex={openIndex}
+            initialIndex={feedIndex}
             endLabel="閉じる"
-            onEnd={() => setOpenIndex(null)}
+            onEnd={() => setFeedIndex(null)}
           />
         </div>
       )}
