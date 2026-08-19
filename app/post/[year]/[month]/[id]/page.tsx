@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
+import { AiSummaryButton } from "@/components/AiSummaryButton";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { PostContent } from "@/components/PostContent";
 import { ReadMarker } from "@/components/ReadMarker";
@@ -77,6 +78,7 @@ export default async function PostPage({ params }: PostPageProps) {
           一覧へ戻る
         </Link>
       </div>
+      <AiSummaryButton postSlug={post.slug.join("/")} />
       {imageCount > 0 && (
         <Link
           href={`/post/${year}/${month}/${id}/feed`}
