@@ -1,4 +1,5 @@
 import { parse } from "node-html-parser";
+import { toFullWidthKatakana } from "../normalizeText";
 
 export interface ParsedPost {
   title: string;
@@ -16,7 +17,7 @@ export function parsePostHtml(html: string): ParsedPost {
   const entryBox = root.querySelector("article > div.entry-box");
 
   const h2 = entryBox?.querySelector("h2");
-  const title = h2?.text.trim() ?? "";
+  const title = toFullWidthKatakana(h2?.text.trim() ?? "");
   h2?.remove();
 
   const date = root.querySelector("article > p.date")?.text.trim() ?? "";

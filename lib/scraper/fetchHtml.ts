@@ -1,3 +1,4 @@
+import { recordScraperError } from "@/lib/analytics/record";
 import { FETCH_TIMEOUT_MS, USER_AGENT } from "./constants";
 import { ScraperError } from "./errors";
 
@@ -52,8 +53,7 @@ async function fetchWithRetry(url: string): Promise<Response> {
   }
 }
 
-/** Fetches HTML from the source site, with optional Workers-Cache-API caching. */
-export async function fetchHtml(
+async function fetchHtmlInner(
   url: string,
   { cacheTtlSeconds }: FetchHtmlOptions = {},
 ): Promise<string> {
@@ -86,4 +86,14 @@ export async function fetchHtml(
   }
 
   return html;
+}
+
+/** Fetches HTML from the source site, with optional Workers-Cache-API caching. */
+export async function fetchHtml(url: string, options: FetchHtmlOptions = {}): Promise<string> {
+  try {
+    return await fetchHtmlInner(url, options);
+  } catch (err) {
+    if (err instanceof ScraperError) recordScraperError(err.kind, err.url);
+    throw err;
+  }
 }

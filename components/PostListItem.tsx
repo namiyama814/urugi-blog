@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BookmarkButton } from "@/components/BookmarkButton";
+import { ReadBadge } from "@/components/ReadBadge";
 import { formatSourceDate } from "@/lib/formatDate";
 import type { PostSummary } from "@/lib/scraper/types";
 
@@ -11,12 +12,13 @@ export function PostListItem({ post }: { post: PostSummary }) {
       <div>
         <Link
           href={`/post/${slug}`}
-          className="font-medium after:absolute after:inset-0 hover:underline"
+          className="font-medium after:absolute after:inset-0"
         >
           {post.title}
         </Link>
-        <p className="mt-1 text-sm text-foreground/60">
+        <p className="mt-1 flex items-center gap-2 text-sm text-foreground/60">
           {formatSourceDate(post.date)}
+          <ReadBadge slug={slug} />
         </p>
       </div>
       <BookmarkButton slug={slug} title={post.title} date={post.date} />

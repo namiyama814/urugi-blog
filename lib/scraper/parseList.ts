@@ -1,4 +1,5 @@
 import { parse } from "node-html-parser";
+import { toFullWidthKatakana } from "../normalizeText";
 import { closeUnclosedListTag } from "./htmlQuirks";
 import { slugFromUrl } from "./slug";
 import type { PostSummary } from "./types";
@@ -18,7 +19,7 @@ export function parseListHtml(html: string): PostSummary[] {
     const href = a.getAttribute("href");
     if (!href) continue;
 
-    const title = a.text.trim();
+    const title = toFullWidthKatakana(a.text.trim());
     const dateMatch = li.text.match(/\((\d{2}\/\d{2}\/\d{2})\)/);
 
     posts.push({

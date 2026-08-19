@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireApiToken } from "@/lib/apiAuth";
 import { scraperErrorResponse } from "@/lib/apiError";
 import { getPost } from "@/lib/scraper/post";
 
@@ -6,7 +7,10 @@ interface RouteContext {
   params: Promise<{ slug: string[] }>;
 }
 
-export async function GET(_request: Request, { params }: RouteContext) {
+export async function GET(request: Request, { params }: RouteContext) {
+  const unauthorized = await requireApiToken(request);
+  if (unauthorized) return unauthorized;
+
   const { slug } = await params;
 
   try {

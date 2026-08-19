@@ -1,8 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { requireApiToken } from "@/lib/apiAuth";
 import { scraperErrorResponse } from "@/lib/apiError";
 import { searchPosts } from "@/lib/scraper/search";
 
 export async function GET(request: NextRequest) {
+  const unauthorized = await requireApiToken(request);
+  if (unauthorized) return unauthorized;
+
   const query = (request.nextUrl.searchParams.get("q") ?? "").trim();
   const page = Math.max(
     1,

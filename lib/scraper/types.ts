@@ -18,3 +18,13 @@ export interface PaginatedResult<T> {
   currentPage: number;
   lastPage: number;
 }
+
+/** newest = source order (default), oldest = reversed, schoolyear = current 年度 (Apr-Mar) only, newest first. */
+export type SortOrder = "newest" | "oldest" | "schoolyear";
+
+/** An <img> found inside a post's sanitized contentHtml, for the /feed vertical viewer. */
+export interface PostImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}

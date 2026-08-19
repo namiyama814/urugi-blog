@@ -1,6 +1,6 @@
 import { CACHE_TTL_SECONDS, SOURCE_BASE_URL } from "./constants";
 import { getPaginatedList } from "./pageMapping";
-import type { PaginatedResult, PostSummary } from "./types";
+import type { PaginatedResult, PostSummary, SortOrder } from "./types";
 
 function buildSourcePageUrl(query: string) {
   return (sourcePage: number): string => {
@@ -14,9 +14,14 @@ function buildSourcePageUrl(query: string) {
 export function searchPosts(
   query: string,
   ourPage: number,
+  sortOrder: SortOrder = "newest",
 ): Promise<PaginatedResult<PostSummary>> {
-  return getPaginatedList(ourPage, {
-    sourcePageUrl: buildSourcePageUrl(query),
-    cacheTtlSeconds: () => CACHE_TTL_SECONDS.search,
-  });
+  return getPaginatedList(
+    ourPage,
+    {
+      sourcePageUrl: buildSourcePageUrl(query),
+      cacheTtlSeconds: () => CACHE_TTL_SECONDS.search,
+    },
+    sortOrder,
+  );
 }

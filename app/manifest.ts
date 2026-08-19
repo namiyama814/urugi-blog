@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "うるぎブログ（非公式）",
-    short_name: "うるぎブログ",
+    name: "山村留学売木学園 ブログ",
+    short_name: "山村留学売木学園 ブログ",
     description: "山村留学売木学園の非公式ブログクライアントアプリ",
     start_url: "/",
     display: "standalone",

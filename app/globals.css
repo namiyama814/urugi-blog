@@ -1,8 +1,36 @@
 @import "tailwindcss";
 
+html {
+  /* Reserves the scrollbar's width even on short pages so navigating between a
+     scrolling and non-scrolling page doesn't shift the centered layout (and its
+     sticky header/footer) sideways. */
+  scrollbar-gutter: stable;
+}
+
 :root {
   --background: #fafafa;
   --foreground: #252525;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #17181a;
+    --foreground: #ededed;
+    color-scheme: dark;
+  }
+}
+
+/* Explicit user choice (via ThemeToggle) always wins over the system preference above. */
+:root[data-theme="light"] {
+  --background: #fafafa;
+  --foreground: #252525;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --background: #17181a;
+  --foreground: #ededed;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -15,6 +43,65 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
+}
+
+/* Native clear (X) buttons are replaced with a custom SVG button in SearchForm. */
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.search-input::-ms-clear {
+  display: none;
+}
+
+/* Pagination's current-page input styled as a plain page number, not a spinner control. */
+.page-jump-input::-webkit-outer-spin-button,
+.page-jump-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.page-jump-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Full-bleed vertical photo feed (app/post/.../feed) — scrollbar hidden for an
+   immersive reels-style look; scroll-snap paging itself needs no JS. */
+.feed-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.feed-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Static page-level backdrop for the feed viewer — a soft dark-gray gradient built
+   from the site's own --foreground token, rather than per-photo full-screen blur
+   (which read as noisy/distracting on wide desktop viewports) or a flat black void. */
+.feed-backdrop {
+  background: radial-gradient(
+    ellipse at 50% 35%,
+    color-mix(in srgb, var(--foreground) 80%, white 20%) 0%,
+    var(--foreground) 55%,
+    #0d0d0d 100%
+  );
+}
+
+/* "Exp dot" particle spawned by FeedScroller.tsx on first viewing each photo — a
+   plain DOM node animated imperatively via the Web Animations API, not React state,
+   since it's a fire-and-forget flourish. Centered on its spawn point via negative
+   margin (not transform) so it doesn't fight the transform the animation itself drives. */
+.exp-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
 /* Typography for sanitized post bodies (see lib/sanitize.ts for the allowed tag set). */
@@ -91,6 +178,7 @@ body {
   height: auto;
   margin: 1.5rem auto;
   border-radius: 0.75rem;
+  cursor: zoom-in;
 }
 .post-content figure {
   margin: 1.5rem 0;

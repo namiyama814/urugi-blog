@@ -8,5 +8,13 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "urugi-blog-analytics",
+      "database_id": "4957f4ac-d6da-4c86-861a-866ebae94447",
+      "migrations_dir": "migrations"
+    }
+  ]
 }
